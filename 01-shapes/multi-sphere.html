@@ -15,8 +15,21 @@
 		<script>
 
 			var camera, scene, renderer;
-			var geometry, material, spheres, mesh;
+			var geometry, material, mesh;
             var light, shadowLight, backLight;
+            var spheres = [{
+                    size: 1,
+                    color: 0x4c00b4,
+                    position: { x: 0, y: 0, z: 0 }
+                },{
+                    size: 0.5,
+                    color: 0x4C9D48,
+                    position: { x: -2, y: 2, z: 0 }
+                },{
+                    size: 1.25,
+                    color: 0xE13A37,
+                    position: { x: 2, y: -2, z: 0 }
+                }];
 
             function createLights() {
                 light = new THREE.HemisphereLight(0xffffff, 0xffffff, .5)
@@ -38,7 +51,7 @@
 
             function createSphere(spheres) {
 
-                spheres.forEach(function(sphere) {
+                spheres.forEach(function(sphere, i) {
                     geometry = new THREE.SphereGeometry( sphere.size );
                     material = new THREE.MeshPhongMaterial ({
                         color: sphere.color,
@@ -48,6 +61,7 @@
 
                     mesh = new THREE.Mesh( geometry, material );
                     mesh.position.set( sphere.position.x, sphere.position.y, sphere.position.z );
+                    mesh.name = 'mesh-' + i;
                     
                     scene.add( mesh );
                 });
@@ -56,8 +70,7 @@
 			function init() {
 
 				camera = new THREE.PerspectiveCamera( 145, window.innerWidth / window.innerHeight, 0.1, 10 );
-				camera.position.z = 4;
-                // camera.position.y = 1;
+				camera.position.z = 3.5;
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xffffff );
@@ -65,28 +78,19 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );	
-                
-                spheres = [{
-                    size: 1,
-                    color: 0x4c00b4,
-                    position: { x: 0, y: 0, z: 0 }
-                },{
-                    size: 0.5,
-                    color: 0x4C9D48,
-                    position: { x: -2, y: 2, z: 0 }
-                },{
-                    size: 1.25,
-                    color: 0xE13A37,
-                    position: { x: 2, y: -2, z: 0 }
-                }];
 
                 createLights();
                 createSphere(spheres);
                 render();		
 			}
 
-            function render() {
+            function render(time) {
 
+                spheres.forEach(function(sphere, i) {
+                    scene.getObjectByName('mesh-' + i).rotation.x = time * (Math.floor(Math.random() * 0.009) + 0.001);
+                    scene.getObjectByName('mesh-' + i).rotation.y = time * (Math.floor(Math.random() * 0.007) + 0.001);
+                });
+               
                 renderer.render( scene, camera );
                 requestAnimationFrame(render);
             }
