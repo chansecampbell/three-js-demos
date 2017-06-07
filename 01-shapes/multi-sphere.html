@@ -15,7 +15,7 @@
 		<script>
 
 			var camera, scene, renderer;
-			var geometry, material, mesh;
+			var geometry, material, spheres, mesh;
             var light, shadowLight, backLight;
 
             function createLights() {
@@ -36,39 +36,56 @@
                 scene.add(backLight);
             }
 
-            function createSphere() {
-                geometry = new THREE.SphereGeometry( 1 );
-				material = new THREE.MeshPhongMaterial ({
-		            color: 0x4c00b4,
-                    wireframe: false,
-                    shading:THREE.FlatShading
-	            });
+            function createSphere(spheres) {
 
-				mesh = new THREE.Mesh( geometry, material );
-				scene.add( mesh );
+                spheres.forEach(function(sphere) {
+                    geometry = new THREE.SphereGeometry( sphere.size );
+                    material = new THREE.MeshPhongMaterial ({
+                        color: sphere.color,
+                        wireframe: false,
+                        shading:THREE.FlatShading
+                    });
+
+                    mesh = new THREE.Mesh( geometry, material );
+                    mesh.position.set( sphere.position.x, sphere.position.y, sphere.position.z );
+                    
+                    scene.add( mesh );
+                });
             }
 
 			function init() {
 
-				camera = new THREE.PerspectiveCamera( 135, window.innerWidth / window.innerHeight, 0.1, 10 );
-				camera.position.z = 3;
+				camera = new THREE.PerspectiveCamera( 145, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.z = 4;
+                // camera.position.y = 1;
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xffffff );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				document.body.appendChild( renderer.domElement );		
+				document.body.appendChild( renderer.domElement );	
+                
+                spheres = [{
+                    size: 1,
+                    color: 0x4c00b4,
+                    position: { x: 0, y: 0, z: 0 }
+                },{
+                    size: 0.5,
+                    color: 0x4C9D48,
+                    position: { x: -2, y: 2, z: 0 }
+                },{
+                    size: 1.25,
+                    color: 0xE13A37,
+                    position: { x: 2, y: -2, z: 0 }
+                }];
 
                 createLights();
-                createSphere();
+                createSphere(spheres);
                 render();		
 			}
 
-            function render(time) {
-
-                mesh.rotation.x = time * 0.0005;
-				mesh.rotation.y = time * 0.001;
+            function render() {
 
                 renderer.render( scene, camera );
                 requestAnimationFrame(render);
