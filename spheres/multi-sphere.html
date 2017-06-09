@@ -9,26 +9,28 @@
 				overflow: hidden;
 			}
 		</style>
+        <script type="text/javascript" src="../js/three.min.js"></script>
+		<script type="text/javascript" src="../js/OrbitControls.js"></script>
 	</head>
 	<body>
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
 		<script>
 
 			var camera, scene, renderer;
 			var geometry, material, mesh;
+            var cameraControls;
             var light, shadowLight, backLight;
             var spheres = [{
-                    size: 1,
+                    size: [3, 15, 15],
                     color: 0x4c00b4,
-                    position: { x: 0, y: 0, z: 0 }
+                    position: { x: -10, y: 10, z: 0 }
                 },{
-                    size: 0.5,
+                    size: [5, 15, 15],
                     color: 0x4C9D48,
                     position: { x: -2, y: 2, z: 0 }
                 },{
-                    size: 1.25,
+                    size: [7, 15, 15],
                     color: 0xE13A37,
-                    position: { x: 2, y: -2, z: 0 }
+                    position: { x: 10, y: -10, z: 0 }
                 }];
 
             function createLights() {
@@ -52,7 +54,7 @@
             function createSphere(spheres) {
 
                 spheres.forEach(function(sphere, i) {
-                    geometry = new THREE.SphereGeometry( sphere.size );
+                    geometry = new THREE.SphereGeometry( sphere.size[0], sphere.size[1], sphere.size[2] );
                     material = new THREE.MeshPhongMaterial ({
                         color: sphere.color,
                         wireframe: false,
@@ -69,8 +71,9 @@
 
 			function init() {
 
-				camera = new THREE.PerspectiveCamera( 145, window.innerWidth / window.innerHeight, 0.1, 10 );
-				camera.position.z = 3.5;
+				camera = new THREE.PerspectiveCamera( 145, window.innerWidth / window.innerHeight, 0.1, 20 );
+				camera.position.z = 14;
+                cameraControls = new THREE.OrbitControls(camera);
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xffffff );
@@ -91,6 +94,7 @@
                     scene.getObjectByName('mesh-' + i).rotation.y = time * (Math.floor(Math.random() * 0.007) + 0.001);
                 });
                
+                cameraControls.update();
                 renderer.render( scene, camera );
                 requestAnimationFrame(render);
             }
