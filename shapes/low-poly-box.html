@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+		<script type="text/javascript" src="../js/three.min.js"></script>
+		<script type="text/javascript" src="../js/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script>
+
+			var camera, scene, renderer;
+			var geometry, material, mesh;
+			var cameraControls;
+            var light, shadowLight, backLight;
+
+            function createLights() {
+                light = new THREE.HemisphereLight(0xffffff, 0xffffff, .5)
+
+                shadowLight = new THREE.DirectionalLight(0xffffff, .8);
+                shadowLight.position.set(200, 200, 200);
+                shadowLight.castShadow = true;
+                shadowLight.shadowDarkness = .2;
+
+                backLight = new THREE.DirectionalLight(0xffffff, .4);
+                backLight.position.set(-100, 200, 50);
+                backLight.shadowDarkness = .1;
+                backLight.castShadow = true;
+
+                scene.add(light);
+                scene.add(shadowLight);
+                scene.add(backLight);
+            }
+
+            function createCube() {
+                geometry = new THREE.BoxGeometry( 1, 1, 1 );
+				material = new THREE.MeshPhongMaterial ({
+		            color: 0x4c00b4,
+                    wireframe: false,
+                    shading:THREE.FlatShading
+	            });
+
+				mesh = new THREE.Mesh( geometry, material );
+				scene.add( mesh );
+            }
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.z = 3;
+				cameraControls = new THREE.OrbitControls(camera);
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xffffff );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );		
+
+                createLights();
+                createCube();
+                render();		
+			}
+
+            function render(time) {
+
+                mesh.rotation.x = time * 0.0005;
+				mesh.rotation.y = time * 0.001;
+
+				cameraControls.update();
+                renderer.render( scene, camera );
+                requestAnimationFrame(render);
+            }
+
+			init();
+
+		</script>
+	</body>
+</html>

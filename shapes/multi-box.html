@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+        <script type="text/javascript" src="../js/three.min.js"></script>
+		<script type="text/javascript" src="../js/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script>
+
+			var camera, scene, renderer;
+			var geometry, material, mesh;
+            var cameraControls;
+            var light, shadowLight, backLight;
+            var cubes = [
+                {
+                    size: [1, 3, 1],
+                    color: 0xE13A37,
+                    position: { x: 0, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 1, 1],
+                    color: 0xE13A37,
+                    position: { x: 1, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 3, 1],
+                    color: 0xE13A37,
+                    position: { x: 2, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 3, 1],
+                    color: 0x4c00b4,
+                    position: { x: 4, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 1, 1],
+                    color: 0x4c00b4,
+                    position: { x: 5, y: 0, z: 0 }
+                },
+                 {
+                    size: [1, 0.5, 1],
+                    color: 0x4c00b4,
+                    position: { x: 5, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 1, 1],
+                    color: 0x4c00b4,
+                    position: { x: 5, y: 2, z: 0 }
+                },
+                {
+                    size: [1, 3, 1],
+                    color: 0xE13A37,
+                    position: { x: 7, y: 1, z: 0 }
+                },
+                {
+                    size: [1, 3, 1],
+                    color: 0xE13A37,
+                    position: { x: 9, y: 1, z: 0 }
+                },
+                {
+                    size: [2, 3, 1],
+                    color: 0x4c00b4,
+                    position: { x: 12, y: 1, z: 0 }
+                },
+                ];
+
+            function createLights() {
+                light = new THREE.HemisphereLight(0xffffff, 0xffffff, .5)
+
+                shadowLight = new THREE.DirectionalLight(0xffffff, .8);
+                shadowLight.position.set(200, 200, 200);
+                shadowLight.castShadow = true;
+                shadowLight.shadowDarkness = .2;
+
+                backLight = new THREE.DirectionalLight(0xffffff, .4);
+                backLight.position.set(-100, 200, 50);
+                backLight.shadowDarkness = .1;
+                backLight.castShadow = true;
+
+                scene.add(light);
+                scene.add(shadowLight);
+                scene.add(backLight);
+            }
+
+            function createCubes(cubes) {
+
+                cubes.forEach(function(cube, i) {
+                    geometry = new THREE.BoxGeometry( cube.size[0], cube.size[1], cube.size[2] );
+                    material = new THREE.MeshPhongMaterial ({
+                        color: cube.color,
+                        wireframe: false,
+                        shading:THREE.FlatShading
+                    });
+
+                    mesh = new THREE.Mesh( geometry, material );
+                    mesh.position.set( cube.position.x, cube.position.y, cube.position.z );
+                    mesh.name = 'mesh-' + i;
+                    
+                    scene.add( mesh );
+                });
+            }
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 115, window.innerWidth / window.innerHeight, 0.1, 20 );
+				camera.position.z = 6;
+				camera.position.y = 2;
+				camera.position.x = -2;
+                cameraControls = new THREE.OrbitControls(camera);
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xffffff );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );	
+
+                createLights();
+                createCubes(cubes);
+                render();		
+			}
+
+            function render(time) {
+               
+                cameraControls.update();
+                renderer.render( scene, camera );
+                requestAnimationFrame(render);
+            }
+
+			init();
+
+		</script>
+	</body>
+</html>
