@@ -9,8 +9,8 @@
 				overflow: hidden;
 			}
 		</style>
-		<script type="text/javascript" src="../js/three.min.js"></script>
-		<script type="text/javascript" src="../js/OrbitControls.js"></script>
+		<script type="text/javascript" src="../assets/js/three.min.js"></script>
+		<script type="text/javascript" src="../assets/js/OrbitControls.js"></script>
 	</head>
 	<body>
 		<script>
@@ -38,8 +38,8 @@
                 scene.add(backLight);
             }
 
-            function createCube() {
-                geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            function createSphere() {
+                geometry = new THREE.SphereGeometry( 5, 15, 15 );
 				material = new THREE.MeshPhongMaterial ({
 		            color: 0x4c00b4,
                     wireframe: false,
@@ -52,8 +52,8 @@
 
 			function init() {
 
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10 );
-				camera.position.z = 3;
+				camera = new THREE.PerspectiveCamera( 135, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.z = 8;
 				cameraControls = new THREE.OrbitControls(camera);
 
 				scene = new THREE.Scene();
@@ -64,7 +64,7 @@
 				document.body.appendChild( renderer.domElement );		
 
                 createLights();
-                createCube();
+                createSphere();
                 render();		
 			}
 

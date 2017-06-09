@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+		<script type="text/javascript" src="../assets/js/three.min.js"></script>
+		<script type="text/javascript" src="../assets/js/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script>
+
+			var camera, scene, renderer;
+			var cameraControls;
+            var light, shadowLight, backLight;
+
+            function createLights() {
+                light = new THREE.HemisphereLight(0xffffff, 0xffffff, .5)
+
+                shadowLight = new THREE.DirectionalLight(0xffffff, .8);
+                shadowLight.position.set(200, 200, 200);
+                shadowLight.castShadow = true;
+                shadowLight.shadowDarkness = .2;
+
+                backLight = new THREE.DirectionalLight(0xffffff, .4);
+                backLight.position.set(-100, 200, 50);
+                backLight.shadowDarkness = .1;
+                backLight.castShadow = true;
+
+                scene.add(light);
+                scene.add(shadowLight);
+                scene.add(backLight);
+            }
+            
+
+            function createSkyBox() {
+                var geometry = new THREE.SphereGeometry(30, 30, 30);
+                var texture = new THREE.Texture();
+                var loader = new THREE.ImageLoader();
+                loader.load('../assets/img/poly-sky.png', function(image) {
+                    texture.image = image;
+                    texture.needsUpdate = true;
+                });
+
+                var material = new THREE.MeshBasicMaterial();
+                material.map = texture;
+                material.side = THREE.BackSide;
+                var sky = new THREE.Mesh(geometry, material);
+                scene.add(sky);
+            }
+
+
+            function createPlane() {
+                var geometry = new THREE.PlaneGeometry( 40, 40, 200, 200 );
+				var material = new THREE.MeshPhongMaterial ({
+		            color: 0x2E7D32,
+                    wireframe: false,
+                    shading:THREE.FlatShading
+	            });
+
+				var mesh = new THREE.Mesh( geometry, material );
+                mesh.rotation.x = (-90 * (Math.PI/180));
+				scene.add( mesh );
+            }
+
+
+
+			function init() {
+
+                scene = new THREE.Scene();
+
+				camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 10000);
+                camera.position.y = 2;
+                camera.position.z = 10;
+                camera.lookAt(scene.position);
+				cameraControls = new THREE.OrbitControls(camera);
+
+				renderer = new THREE.WebGLRenderer();
+                renderer.shadowMap.enabled = true;
+                renderer.setClearColor(0x000000, 1.0);
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );		
+
+                createLights();
+                createSkyBox();
+                createPlane();
+                render();		
+			}
+
+            function render() {
+
+				cameraControls.update();
+                renderer.render( scene, camera );
+                requestAnimationFrame(render);
+            }
+
+			init();
+
+		</script>
+	</body>
+</html>
