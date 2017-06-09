@@ -36,13 +36,24 @@
                 scene.add(shadowLight);
                 scene.add(backLight);
             }
+
+            function createCamera() {
+                camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 10000);
+                camera.position.y = 2;
+                camera.position.z = 10;
+
+				cameraControls = new THREE.OrbitControls(camera);
+                cameraControls.noZoom = true;
+                cameraControls.minPolarAngle = 0.5;
+	            cameraControls.maxPolarAngle = 1.5;
+            }
             
 
             function createSkyBox() {
-                var geometry = new THREE.SphereGeometry(30, 30, 30);
+                var geometry = new THREE.BoxGeometry(300, 300, 300);
                 var texture = new THREE.Texture();
                 var loader = new THREE.ImageLoader();
-                loader.load('../assets/img/poly-sky.png', function(image) {
+                loader.load('../assets/img/light-blue-wrap.jpg', function(image) {
                     texture.image = image;
                     texture.needsUpdate = true;
                 });
@@ -56,9 +67,9 @@
 
 
             function createPlane() {
-                var geometry = new THREE.PlaneGeometry( 40, 40, 200, 200 );
+                var geometry = new THREE.PlaneGeometry( 300, 300, 300 );
 				var material = new THREE.MeshPhongMaterial ({
-		            color: 0x2E7D32,
+		            color: 0x869658,
                     wireframe: false,
                     shading:THREE.FlatShading
 	            });
@@ -69,24 +80,19 @@
             }
 
 
-
 			function init() {
 
                 scene = new THREE.Scene();
+                scene.background = new THREE.Color( 0xffffff );
 
-				camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 10000);
-                camera.position.y = 2;
-                camera.position.z = 10;
-                camera.lookAt(scene.position);
-				cameraControls = new THREE.OrbitControls(camera);
-
-				renderer = new THREE.WebGLRenderer();
+                renderer = new THREE.WebGLRenderer();
                 renderer.shadowMap.enabled = true;
-                renderer.setClearColor(0x000000, 1.0);
+
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );		
 
                 createLights();
+                createCamera();
                 createSkyBox();
                 createPlane();
                 render();		
@@ -94,7 +100,7 @@
 
             function render() {
 
-				cameraControls.update();
+                cameraControls.update();
                 renderer.render( scene, camera );
                 requestAnimationFrame(render);
             }
