@@ -11,6 +11,7 @@
 		</style>
 		<script type="text/javascript" src="../assets/js/three.min.js"></script>
 		<script type="text/javascript" src="../assets/js/OrbitControls.js"></script>
+		<script type="text/javascript" src="../assets/js/perlin.js"></script>
 	</head>
 	<body>
 		<script>
@@ -64,15 +65,34 @@
                 var sky = new THREE.Mesh(geometry, material);
                 scene.add(sky);
             }
+            
+
+                // this.objects['ground'].rotation.x = de2ra(-90);
+                // this.objects['ground'].position.set(0, FLOOR, 0);
+                // this.objects['ground'].receiveShadow = true;
+                // this.scene.add(this.objects['ground']);
+    
 
 
             function createPlane() {
+                
+                var noiseGenerator = new Noise(Math.random());
                 var geometry = new THREE.PlaneGeometry( 300, 300, 300 );
 				var material = new THREE.MeshPhongMaterial ({
 		            color: 0x869658,
-                    wireframe: false,
-                    shading:THREE.FlatShading
+                    // shading:THREE.FlatShading,
+                    emissive: new THREE.Color(0xffffff),
+                    emissiveIntensity: 0.5
 	            });
+
+                for (var i = 0, l = geometry.vertices.length; i < l; i++) {
+                    var vertex = geometry.vertices[i];
+                    var data = noiseGenerator.perlin2(vertex.x, vertex.y);
+                    vertex.z = Math.abs(data * 0.2) - 0.05;
+                }
+
+                geometry.computeFaceNormals();
+                geometry.computeVertexNormals();
 
 				var mesh = new THREE.Mesh( geometry, material );
                 mesh.rotation.x = (-90 * (Math.PI/180));
